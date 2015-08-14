@@ -89,6 +89,7 @@ function(compiler_id_detection outvar lang)
       MSVC
       ADSP
       IAR
+      RVDS
     )
     if (lang STREQUAL C)
       list(APPEND ordered_compilers

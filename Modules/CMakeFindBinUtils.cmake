@@ -42,6 +42,14 @@ if("x${CMAKE_C_SIMULATE_ID}" STREQUAL "xMSVC"
 
   mark_as_advanced(CMAKE_LINKER)
 
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "RVDS"
+   OR "${CMAKE_C_COMPILER_ID}" MATCHES "RVDS")
+
+  find_program(CMAKE_LINKER NAMES ${_CMAKE_TOOLCHAIN_PREFIX}armlink HINTS ${_CMAKE_TOOLCHAIN_LOCATION})
+  find_program(CMAKE_AR NAMES ${_CMAKE_TOOLCHAIN_PREFIX}armar HINTS ${_CMAKE_TOOLCHAIN_LOCATION})
+
+  mark_as_advanced(CMAKE_LINKER CMAKE_AR)
+
 # in all other cases search for ar, ranlib, etc.
 else()
   if(CMAKE_C_COMPILER_EXTERNAL_TOOLCHAIN)

@@ -1,0 +1,47 @@
+# This module is shared by multiple languages; use include blocker.
+if(__COMPILER_RVDS)
+  return()
+endif()
+set(__COMPILER_RVDS 1)
+
+macro(__compiler_rvds lang)
+  SET(CMAKE_${lang}_CREATE_ASSEMBLY_SOURCE "<CMAKE_${lang}_COMPILER> <DEFINES> <FLAGS> -S <SOURCE> -o <ASSEMBLY_SOURCE>")
+  SET(CMAKE_${lang}_CREATE_PREPROCESSED_SOURCE "<CMAKE_${lang}_COMPILER> <DEFINES> <FLAGS> -E <SOURCE> > <PREPROCESSED_SOURCE>")
+
+  # Allow toolchain files to override these
+  if(NOT DEFINED CMAKE_${lang}_FLAGS_INIT)
+    SET(CMAKE_${lang}_FLAGS_INIT "")
+  endif()
+
+  if(NOT DEFINED CMAKE_${lang}_FLAGS_DEBUG_INIT)
+    SET(CMAKE_${lang}_FLAGS_DEBUG_INIT "-g")
+  endif()
+
+  if(NOT DEFINED CMAKE_${lang}_FLAGS_MINSIZEREL_INIT)
+    SET(CMAKE_${lang}_FLAGS_MINSIZEREL_INIT "-Ospace -DNDEBUG")
+  endif()
+
+  if(NOT DEFINED CMAKE_${lang}_FLAGS_RELEASE_INIT)
+    SET(CMAKE_${lang}_FLAGS_RELEASE_INIT "-Otime -DNDEBUG")
+  endif()
+
+  if(NOT DEFINED CMAKE_${lang}_FLAGS_RELWITHDEBINFO_INIT)
+    SET(CMAKE_${lang}_FLAGS_RELWITHDEBINFO_INIT "-O2 -g")
+  endif()
+
+  if(NOT DEFINED CMAKE_${lang}_CREATE_STATIC_LIBRARY)
+    SET(CMAKE_${lang}_CREATE_STATIC_LIBRARY "<CMAKE_AR> --create <LINK_FLAGS> <TARGET> <OBJECTS>")
+  endif()
+
+  set(CMAKE_SHARED_LIBRARY_${lang}_FLAGS "--fpic")
+  set(CMAKE_SHARED_LIBRARY_CREATE_${lang}_FLAGS "--shared")
+
+  if(NOT DEFINED CMAKE_${lang}_CREATE_SHARED_LIBRARY)
+    SET(CMAKE_${lang}_CREATE_SHARED_LIBRARY "<CMAKE_LINKER> <CMAKE_SHARED_LIBRARY_${lang}_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_${lang}_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_${lang}_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
+  endif()
+
+  if(NOT DEFINED CMAKE_${lang}_LINK_EXECUTABLE)
+    SET(CMAKE_${lang}_LINK_EXECUTABLE "<CMAKE_LINKER> -o <TARGET> <OBJECTS> <LINK_LIBRARIES> <LINK_FLAGS>")
+  endif()
+
+endmacro()
